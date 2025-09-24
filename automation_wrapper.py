@@ -4,22 +4,18 @@ import gspread
 from oauth2client.service_account import ServiceAccountCredentials
 from playwright.async_api import async_playwright
 from original_script import process_rows
+import os
 
 async def run_automation_async(creds_path, sheet_name, stop_event, status_callback):
     """
     The main async function that sets up the browser and runs the automation.
     """
     try:
-        with open(creds_path, 'r') as f:
-            creds_data = json.load(f)
-        
-        email = creds_data.get("email")
-        password = creds_data.get("password")
+        # Use hardcoded credentials for the website login
+        email = "likepeas@gmail.com"
+        password = "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v"
 
-        if not email or not password:
-            raise ValueError("Credentials file must contain 'email' and 'password' keys.")
-
-        # Setup Google Sheets
+        # Setup Google Sheets using the uploaded credentials file
         scope = ['https://spreadsheets.google.com/feeds', 'https://www.googleapis.com/auth/drive']
         creds = ServiceAccountCredentials.from_json_keyfile_name(creds_path, scope)
         client = gspread.authorize(creds)
@@ -52,6 +48,10 @@ async def run_automation_async(creds_path, sheet_name, stop_event, status_callba
     finally:
         if not stop_event.is_set():
             status_callback("Stopped")
+        # Clean up the uploaded credentials file
+        if os.path.exists(creds_path):
+            os.remove(creds_path)
+            print(f"Removed credentials file: {creds_path}")
 
 def run_automation(creds_path, sheet_name, stop_event, status_callback):
     """
