@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Automation Control</title>
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Automation Control</h1>
+        <div id="status-container">
+            Current Status: <span id="status">Stopped</span>
+        </div>
+        <form id="control-form">
+            <div class="form-group">
+                <label for="creds-file">Credential File (.json):</label>
+                <input type="file" id="creds-file" name="creds_file" accept=".json" required>
+            </div>
+            <div class="form-group">
+                <label for="sheet-name">Google Sheet Name:</label>
+                <input type="text" id="sheet-name" name="sheet_name" required>
+            </div>
+            <div class="buttons">
+                <button type="button" id="start-btn">Start Automation</button>
+                <button type="button" id="stop-btn">Stop Automation</button>
+            </div>
+        </form>
+        <div id="error-message"></div>
+    </div>
+    <script>
+        const statusEl = document.getElementById('status');
+        const startBtn = document.getElementById('start-btn');
+        const stopBtn = document.getElementById('stop-btn');
+        const credsFileEl = document.getElementById('creds-file');
+        const sheetNameEl = document.getElementById('sheet-name');
+        const errorMessageEl = document.getElementById('error-message');
+
+        async function updateStatus() {
+            try {
+                const response = await fetch('/status');
+                const data = await response.json();
+                statusEl.textContent = data.status;
+                if (data.status === 'Running') {
+                    startBtn.disabled = true;
+                    stopBtn.disabled = false;
+                } else {
+                    startBtn.disabled = false;
+                    stopBtn.disabled = true;
+                }
+                if (data.error) {
+                    errorMessageEl.textContent = `Error: ${data.error}`;
+                } else {
+                    errorMessageEl.textContent = '';
+                }
+            } catch (error) {
+                statusEl.textContent = 'Error fetching status';
+                console.error('Error fetching status:', error);
+            }
+        }
+
+        startBtn.addEventListener('click', async () => {
+            const formData = new FormData();
+            formData.append('creds_file', credsFileEl.files[0]);
+            formData.append('sheet_name', sheetNameEl.value);
+
+            try {
+                const response = await fetch('/start', {
+                    method: 'POST',
+                    body: formData
+                });
+                const data = await response.json();
+                if (data.status === 'error') {
+                    errorMessageEl.textContent = `Error: ${data.message}`;
+                }
+                updateStatus();
+            } catch (error) {
+                errorMessageEl.textContent = 'Error starting automation.';
+                console.error('Error starting automation:', error);
+            }
+        });
+
+        stopBtn.addEventListener('click', async () => {
+            try {
+                await fetch('/stop', { method: 'POST' });
+                updateStatus();
+            } catch (error) {
+                errorMessageEl.textContent = 'Error stopping automation.';
+                console.error('Error stopping automation:', error);
+            }
+        });
+
+        // Initial status update and periodic checks
+        updateStatus();
+        setInterval(updateStatus, 5000);
+    </script>
+</body>
+</html>

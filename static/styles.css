@@ -1,0 +1,96 @@
+body {
+    font-family: sans-serif;
+    background-color: #f4f4f9;
+    color: #333;
+    margin: 0;
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+.container {
+    background: #fff;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 500px;
+}
+
+h1 {
+    text-align: center;
+    color: #444;
+    margin-bottom: 20px;
+}
+
+#status-container {
+    text-align: center;
+    margin-bottom: 20px;
+    font-size: 1.1em;
+    padding: 10px;
+    background-color: #eef;
+    border-radius: 4px;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+input[type="text"], input[type="file"] {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+.buttons {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+button {
+    flex: 1;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 4px;
+    color: #fff;
+    font-size: 1em;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+#start-btn {
+    background-color: #28a745;
+}
+
+#start-btn:disabled {
+    background-color: #9fd8ac;
+    cursor: not-allowed;
+}
+
+#stop-btn {
+    background-color: #dc3545;
+}
+
+#stop-btn:disabled {
+    background-color: #f1aeb5;
+    cursor: not-allowed;
+}
+
+#error-message {
+    color: #dc3545;
+    margin-top: 15px;
+    text-align: center;
+    min-height: 1.2em;
+}
